@@ -3,7 +3,7 @@ const express = require("express");
 
 const router = express.Router();
 const Event = require("../Models/event");
-const { auth } = require("../Middleware/utils");
+const { getEvent, auth } = require("../Middleware/utils");
 
 // Get All
 router.get("/", async (req, res) => {
@@ -13,6 +13,11 @@ router.get("/", async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
+});
+
+// Getting One
+router.get("/:id", getEvent, (req, res) => {
+  res.json(res.event);
 });
 
 // Creating one

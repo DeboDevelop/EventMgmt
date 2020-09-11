@@ -1,4 +1,5 @@
 const User = require("../Models/user");
+const Event = require("../Models/event");
 const jwt = require("jsonwebtoken");
 
 //Middle for One user
@@ -14,6 +15,21 @@ const getUser = async (req, res, next) => {
   }
 
   res.user = user;
+  next();
+};
+
+const getEvent = async (req, res, next) => {
+  let event;
+  try {
+    event = await Event.findById(req.params.id);
+    if (event == null) {
+      return res.status(404).json({ message: "Cannot find subscriber" });
+    }
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+
+  res.event = event;
   next();
 };
 
@@ -54,4 +70,5 @@ module.exports = {
   getUser,
   generateToken,
   auth,
+  getEvent,
 };
