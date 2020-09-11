@@ -1,6 +1,8 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
+const path = require("path");
+
 const usersRouter = require("./Routes/users");
 const eventsRouter = require("./Routes/events");
 
@@ -19,6 +21,9 @@ db.once("open", () => console.log("Connected to Database"));
 app.use(express.json());
 
 // Setting up the routes
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname + "/views/index.html"));
+});
 app.use("/api/users", usersRouter);
 app.use("/api/event", eventsRouter);
 
