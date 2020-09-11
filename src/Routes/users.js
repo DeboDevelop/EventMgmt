@@ -16,6 +16,44 @@ router.get("/", async (req, res) => {
   }
 });
 
+//login
+router.post("/login", async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+      return res.status(404).json({ message: "The given email is invalid" });
+    } else {
+      const isPasswordMatch = await bcryptjs.compare(
+        req.body.password,
+        user.password
+      );
+      if (!isPasswordMatch) {
+        return res
+          .status(404)
+          .json({ message: "The given passward is invalid" });
+      } else {
+        let tempUser = {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+        };
+        jwt.sign(
+          { ...tempUser },
+          process.env.SECRET_KEY,
+          { expiresIn: "30 days" },
+          (err, token) => {
+            return res.status(200).json({
+              token,
+            });
+          }
+        );
+      }
+    }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 //post one
 //Register
 router.post("/register", async (req, res) => {
