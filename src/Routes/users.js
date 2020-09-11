@@ -5,10 +5,10 @@ const jwt = require("jsonwebtoken");
 
 const router = express.Router();
 const User = require("../Models/user");
-const { getUser, generateToken } = require("../Middleware/utils");
+const { getUser, generateToken, auth } = require("../Middleware/utils");
 
 //Get all
-router.get("/", async (req, res) => {
+router.get("/", auth, async (req, res) => {
   try {
     const users = await User.find();
     res.json(users);
@@ -18,7 +18,7 @@ router.get("/", async (req, res) => {
 });
 
 // Getting One
-router.get("/:id", getUser, (req, res) => {
+router.get("/:id", auth, getUser, (req, res) => {
   res.json(res.user);
 });
 
@@ -118,7 +118,7 @@ router.post("/register", async (req, res) => {
 });
 
 //update one
-router.patch("/:id", getUser, async (req, res) => {
+router.patch("/:id", auth, getUser, async (req, res) => {
   if (req.body.name != null) {
     res.user.name = req.body.name;
   }
@@ -139,7 +139,7 @@ router.patch("/:id", getUser, async (req, res) => {
 });
 
 //delete one
-router.delete("/:id", getUser, async (req, res) => {
+router.delete("/:id", auth, getUser, async (req, res) => {
   try {
     await res.user.remove();
     res.json({ message: "User Deleted" });
