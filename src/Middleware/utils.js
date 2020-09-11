@@ -25,7 +25,7 @@ const getEvent = async (req, res, next) => {
     //Finding the Event by id.
     event = await Event.findById(req.params.id);
     if (event == null) {
-      return res.status(404).json({ message: "Cannot find subscriber" });
+      return res.status(404).json({ message: "Cannot find Event" });
     }
   } catch (err) {
     return res.status(500).json({ message: err.message });
