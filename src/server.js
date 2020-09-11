@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const usersRouter = require("./Routes/users");
+const eventsRouter = require("./Routes/events");
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use(express.json());
 
 // Setting up the routes
 app.use("/api/users", usersRouter);
+app.use("/api/event", eventsRouter);
 
 //Creating port
 const PORT = process.env.PORT || 3000;
