@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 
 const router = express.Router();
 const User = require("../Models/user");
+const { getUser, generateToken } = require("../Middleware/utils");
 
 //Get all
 router.get("/", async (req, res) => {
@@ -116,20 +117,25 @@ router.post("/register", async (req, res) => {
   });
 });
 
-//Middle for One user
-async function getUser(req, res, next) {
-  let user;
-  try {
-    user = await User.findById(req.params.id);
-    if (user == null) {
-      return res.status(404).json({ message: "Cannot find User" });
-    }
-  } catch (err) {
-    return res.status(500).json({ message: err.message });
+//update one
+router.patch("/:id", getUser, async (req, res) => {
+  if (req.body.name != null) {
+    res.user.name = req.body.name;
+  }
+  if (req.body.email != null) {
+    res.user.email = req.body.email;
+  }
+  if (req.body.password != null) {
+    res.user.password = req.body.password;
   }
 
-  res.user = user;
-  next();
-}
+  try {
+    const updatedUser = await res.user.save();
+    const token = await generateToken(updatedUser);
+    return res.json({ token });
+  } catch (err) {
+    return res.status(400).json({ message: err.message });
+  }
+});
 
 module.exports = router;
