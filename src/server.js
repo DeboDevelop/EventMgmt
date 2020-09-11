@@ -30,6 +30,7 @@ app.use("/api/event", eventsRouter);
 //Creating port
 const PORT = process.env.PORT || 3000;
 
+//Listening to port
 app.listen(PORT, () =>
   console.log(`The Server is running on http://localhost:${PORT}`)
 );

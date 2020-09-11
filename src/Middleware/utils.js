@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const getUser = async (req, res, next) => {
   let user;
   try {
+    //Finding the user by id
     user = await User.findById(req.params.id);
     if (user == null) {
       return res.status(404).json({ message: "Cannot find User" });
@@ -21,6 +22,7 @@ const getUser = async (req, res, next) => {
 const getEvent = async (req, res, next) => {
   let event;
   try {
+    //Finding the Event by id.
     event = await Event.findById(req.params.id);
     if (event == null) {
       return res.status(404).json({ message: "Cannot find subscriber" });
@@ -33,13 +35,32 @@ const getEvent = async (req, res, next) => {
   next();
 };
 
+async function getUserEvent(req, res, next) {
+  let events;
+  try {
+    //Finding all objects by user
+    events = await Event.find({ user: req.params.user });
+    if (events == null) {
+      return res.status(404).json({ message: "Cannot find any events" });
+    }
+  } catch (err) {
+    console.log(err.message);
+    return res.status(500).json({ message: "Internal Error occured" });
+  }
+
+  res.event = events;
+  next();
+}
+
 const generateToken = (item) => {
+  //creting the user object
   const user = {
     id: item.id,
     name: item.name,
     email: item.email,
   };
   return new Promise((resolve, reject) => {
+    //Creating token.
     jwt.sign(
       user,
       process.env.SECRET_KEY,
@@ -58,6 +79,7 @@ const generateToken = (item) => {
 
 const auth = (req, res, next) => {
   try {
+    //Checking whether the token is valid or not.
     const token = req.headers.authorization.split(" ")[1];
     jwt.verify(token, process.env.SECRET_KEY);
     next();
@@ -71,4 +93,5 @@ module.exports = {
   generateToken,
   auth,
   getEvent,
+  getUserEvent,
 };

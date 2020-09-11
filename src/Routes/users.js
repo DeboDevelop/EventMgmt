@@ -10,6 +10,7 @@ const { getUser, generateToken, auth } = require("../Middleware/utils");
 //Get all
 router.get("/", auth, async (req, res) => {
   try {
+    //Finding all the Users
     const users = await User.find();
     res.json(users);
   } catch (err) {
@@ -25,10 +26,12 @@ router.get("/:id", auth, getUser, (req, res) => {
 //login
 router.post("/login", async (req, res) => {
   try {
+    //Checking if the email already exist or not.
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
       return res.status(404).json({ message: "The given email is invalid" });
     } else {
+      //Checking if the password is correct or not using bcrypt
       const isPasswordMatch = await bcryptjs.compare(
         req.body.password,
         user.password
@@ -38,11 +41,14 @@ router.post("/login", async (req, res) => {
           .status(404)
           .json({ message: "The given passward is invalid" });
       } else {
+        //Creating a user object without password before jwt tokenization.
+        //As a result the token won't contain password making it more secure.
         let tempUser = {
           id: user.id,
           name: user.name,
           email: user.email,
         };
+        //Creating the token.
         jwt.sign(
           { ...tempUser },
           process.env.SECRET_KEY,
@@ -64,17 +70,19 @@ router.post("/login", async (req, res) => {
 //Register
 router.post("/register", async (req, res) => {
   try {
+    //Finding whether user already exist or not.
     const user = await User.findOne({ email: req.body.email });
     if (user) {
       return res.status(400).json({ message: "Email Already Exist" });
     }
+    //Checking if the password match or not
     if (req.body.password != req.body.password2) {
       return res.status(400).json({ message: "Password Doesn't Match" });
     }
   } catch (error) {
     return res.status(500).json({ error });
   }
-
+  //Creating the new user object
   const user = new User({
     name: req.body.name,
     email: req.body.email,
@@ -92,12 +100,16 @@ router.post("/register", async (req, res) => {
       user.password = hashedPassword;
 
       try {
+        //Saving the user
         const newUser = await user.save();
+        //Creating a user object without password before jwt tokenization.
+        //As a result the token won't contain password making it more secure.
         const tempUser = {
           id: newUser.id,
           name: newUser.name,
           email: newUser.email,
         };
+        //Creating the token.
         jwt.sign(
           { ...tempUser },
           process.env.SECRET_KEY,
@@ -130,7 +142,9 @@ router.patch("/:id", auth, getUser, async (req, res) => {
   }
 
   try {
+    //Saving the updated user object
     const updatedUser = await res.user.save();
+    //Creating a updated token from the updated user data
     const token = await generateToken(updatedUser);
     return res.json({ token });
   } catch (err) {
@@ -141,6 +155,7 @@ router.patch("/:id", auth, getUser, async (req, res) => {
 //delete one
 router.delete("/:id", auth, getUser, async (req, res) => {
   try {
+    //Deleting the user
     await res.user.remove();
     res.json({ message: "User Deleted" });
   } catch (err) {

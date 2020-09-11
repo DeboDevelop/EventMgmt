@@ -3,11 +3,12 @@ const express = require("express");
 
 const router = express.Router();
 const Event = require("../Models/event");
-const { getEvent, auth } = require("../Middleware/utils");
+const { getEvent, getUserEvent, auth } = require("../Middleware/utils");
 
 // Get All
 router.get("/", async (req, res) => {
   try {
+    //Finding all events
     const events = await Event.find();
     res.json(events);
   } catch (err) {
@@ -20,8 +21,14 @@ router.get("/:id", getEvent, (req, res) => {
   res.json(res.event);
 });
 
+// Getting User Event
+router.get("/user/:user", getUserEvent, (req, res) => {
+  res.json(res.event);
+});
+
 // Creating one
 router.post("/", async (req, res) => {
+  //Creating new event
   const event = new Event({
     event_name: req.body.event_name,
     user: req.body.user,
@@ -29,6 +36,7 @@ router.post("/", async (req, res) => {
     date_and_time: req.body.date_and_time,
   });
   try {
+    //Saving the created event
     const newEvent = await event.save();
     res.status(201).json(newEvent);
   } catch (err) {
@@ -51,6 +59,7 @@ router.patch("/:id", getEvent, async (req, res) => {
     res.event.date_and_time = req.body.date_and_time;
   }
   try {
+    //Saving the event
     const updatedEvent = await res.event.save();
     res.json(updatedEvent);
   } catch (err) {
@@ -61,6 +70,7 @@ router.patch("/:id", getEvent, async (req, res) => {
 // Deleting One
 router.delete("/:id", getEvent, async (req, res) => {
   try {
+    //Removing the Event
     await res.event.remove();
     res.json({ message: "Event Deleted" });
   } catch (err) {
