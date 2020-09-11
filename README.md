@@ -2,6 +2,8 @@
 
 It is a REST API created for Sarayu Digital Labs interview. It haves a user route and events route. You can register an account and become a user. A user can add, edit adn delete events.
 
+[Hosted Version Here](https://event-debodevelop.herokuapp.com/)
+
 ## Requirements
 
 node v10.22.0 or above.
