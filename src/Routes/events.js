@@ -6,7 +6,7 @@ const Event = require("../Models/event");
 const { getEvent, getUserEvent, auth } = require("../Middleware/utils");
 
 // Get All
-router.get("/", async (req, res) => {
+router.get("/", auth, async (req, res) => {
   try {
     //Finding all events
     const events = await Event.find();
@@ -17,17 +17,17 @@ router.get("/", async (req, res) => {
 });
 
 // Getting One
-router.get("/:id", getEvent, (req, res) => {
+router.get("/:id", auth, getEvent, (req, res) => {
   res.json(res.event);
 });
 
 // Getting User Event
-router.get("/user/:user", getUserEvent, (req, res) => {
+router.get("/user/:user", auth, getUserEvent, (req, res) => {
   res.json(res.event);
 });
 
 // Creating one
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   //Creating new event
   const event = new Event({
     event_name: req.body.event_name,
@@ -45,7 +45,7 @@ router.post("/", async (req, res) => {
 });
 
 // Updating One
-router.patch("/:id", getEvent, async (req, res) => {
+router.patch("/:id", auth, getEvent, async (req, res) => {
   if (req.body.event_name != null) {
     res.event.event_name = req.body.event_name;
   }
@@ -68,7 +68,7 @@ router.patch("/:id", getEvent, async (req, res) => {
 });
 
 // Deleting One
-router.delete("/:id", getEvent, async (req, res) => {
+router.delete("/:id", auth, getEvent, async (req, res) => {
   try {
     //Removing the Event
     await res.event.remove();

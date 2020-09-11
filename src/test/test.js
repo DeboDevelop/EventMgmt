@@ -1,3 +1,4 @@
+require("dotenv").config();
 let mongoose = require("mongoose");
 let Event = require("../Models/event");
 
@@ -5,6 +6,8 @@ let chai = require("chai");
 let chaiHttp = require("chai-http");
 let server = require("../server");
 let should = chai.should();
+
+let token = "Bearer " + process.env.TEST_TOKEN;
 
 chai.use(chaiHttp);
 
@@ -19,6 +22,7 @@ describe("Events", () => {
       chai
         .request(server)
         .get("/api/event")
+        .set("Authorization", token)
         .end((err, res) => {
           res.should.have.status(200);
           done();
@@ -39,6 +43,7 @@ describe("Events", () => {
       chai
         .request(server)
         .post("/api/event")
+        .set("Authorization", token)
         .send(myEvent)
         .end((err, res) => {
           res.should.have.status(201);
