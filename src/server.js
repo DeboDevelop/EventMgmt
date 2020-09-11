@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
+const usersRouter = require("./Routes/users");
 
 const app = express();
 
@@ -15,6 +16,9 @@ db.once("open", () => console.log("Connected to Database"));
 
 // setting up the server for req with json body
 app.use(express.json());
+
+// Setting up the routes
+app.use("/api/users", usersRouter);
 
 //Creating port
 const PORT = process.env.PORT || 3000;
