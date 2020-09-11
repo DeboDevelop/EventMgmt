@@ -138,4 +138,14 @@ router.patch("/:id", getUser, async (req, res) => {
   }
 });
 
+//delete one
+router.delete("/:id", getUser, async (req, res) => {
+  try {
+    await res.user.remove();
+    res.json({ message: "User Deleted" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;
